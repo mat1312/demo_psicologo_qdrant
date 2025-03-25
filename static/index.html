@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Psicologo Virtuale</title>
+  <!-- Bootstrap CSS (lasciato per compatibilità con il widget) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- AOS Animation Library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
+  <!-- Marked.js per il parsing del Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            therapy: {
+              blue: '#4682B4',
+              darkblue: '#2c5282',
+              lightblue: '#63b3ed',
+              gray: '#f2f2f2',
+              darkgray: '#333333',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #fafafa;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234682B4' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    /* Effetto di parallax per l'header */
+    .parallax-header {
+      position: relative;
+      overflow: hidden;
+      height: 250px; /* Aumentata altezza per mobile */
+      background: linear-gradient(135deg, #4682B4 0%, #2c5282 100%);
+    }
+    
+    @media (min-width: 768px) {
+      .parallax-header {
+        height: 220px; /* Altezza originale per desktop */
+      }
+    }
+    
+    .parallax-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.08'/%3E%3C/svg%3E");
+      opacity: 0.8;
+      z-index: 0;
+    }
+    
+    .parallax-header-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .header-wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      transform: rotate(180deg);
+      height: 46px; /* Altezza fissa per l'onda */
+    }
+
+    .header-wave svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 46px;
+    }
+
+    .header-wave .shape-fill {
+      fill: #FFFFFF;
+    }
+
+    .therapy-blue {
+      background-color: #4682B4;
+    }
+    
+    .therapy-text-blue {
+      color: #4682B4;
+    }
+
+    /* Animazione per il logo */
+    @keyframes pulse-subtle {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse-animation {
+      animation: pulse-subtle 3s infinite ease-in-out;
+    }
+    
+    /* Card con effetti avanzati */
+    .card-3d {
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 30px rgba(70, 130, 180, 0.1);
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    
+    .card-3d:hover {
+      transform: translateY(-5px) translateZ(0);
+      box-shadow: 0 15px 35px rgba(70, 130, 180, 0.15);
+    }
+    
+    .card-header {
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      background: linear-gradient(to right, #f9f9f9, #ffffff);
+      padding: 1.25rem 1.5rem;
+    }
+    
+    /* Bottoni con effetti moderni */
+    .btn-therapy {
+      background: linear-gradient(135deg, #4682B4 0%, #2c5282 100%);
+      color: white;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(70, 130, 180, 0.3);
+      border: none;
+    }
+    
+    .btn-therapy:hover {
+      background: linear-gradient(135deg, #63b3ed 0%, #4682B4 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(70, 130, 180, 0.4);
+    }
+    
+    .btn-therapy::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.5);
+      opacity: 0;
+      border-radius: 100%;
+      transform: scale(1, 1) translate(-50%);
+      transform-origin: 50% 50%;
+    }
+    
+    .btn-therapy:hover::after {
+      animation: ripple 1s ease-out;
+    }
+    
+    @keyframes ripple {
+      0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(20, 20);
+        opacity: 0;
+      }
+    }
+    
+    /* Input con effetti moderni */
+    .input-therapy {
+      transition: all 0.3s ease;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .input-therapy:focus {
+      border-color: #4682B4;
+      box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.15);
+      outline: none;
+    }
+    
+    /* Container del widget: centrato orizzontalmente, ancorato in alto */
+    .widget-container {
+      max-width: 600px;
+      min-height: 250px;
+      margin: 0 auto;                /* Centra il container nella pagina */
+      position: relative !important; /* Mantiene la compatibilità col widget */
+      display: flex;                 
+      align-items: flex-start;       /* Posiziona il widget in alto */
+      justify-content: center;       /* Centra orizzontalmente */
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    @media only screen and (max-width: 768px) {
+      .widget-container {
+        width: 90%;
+        min-height: auto;  /* su mobile l'altezza può ridursi */
+      }
+    }
+
+    /* Rimuoviamo i posizionamenti assoluti dal widget */
+    elevenlabs-convai {
+      position: static !important;
+      top: 0 !important;
+      left: 0 !important;
+      transform: none !important;
+      margin: 0 auto !important;
+    }
+    
+    /* Badge personalizzato */
+    .badge-therapy {
+      background-color: rgba(70, 130, 180, 0.1);
+      color: #4682B4;
+      border-radius: 50px;
+      padding: 0.35rem 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(70, 130, 180, 0.1);
+    }
+    
+    .badge-therapy i {
+      margin-right: 0.35rem;
+    }
+
+    /* Chat container con stile migliorato */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+      overflow-y: auto;
+      padding: 1.5rem;
+      background-color: #fafafa;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.03);
+    }
+
+    .chat-message {
+      max-width: 80%;
+      margin-bottom: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    
+    .chat-message:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #4682B4 0%, #2c5282 100%);
+      color: white;
+      border-bottom-right-radius: 0.25rem;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background-color: white;
+      color: #333;
+      border-bottom-left-radius: 0.25rem;
+      border-left: 3px solid #4682B4;
+    }
+
+    /* Stili per il contenuto Markdown nei messaggi del bot e nell'analisi */
+    .bot-message a, .markdown-content a {
+      color: #4682B4;
+      text-decoration: underline;
+    }
+
+    .bot-message h1, .bot-message h2, .bot-message h3, 
+    .bot-message h4, .bot-message h5, .bot-message h6,
+    .markdown-content h1, .markdown-content h2, .markdown-content h3,
+    .markdown-content h4, .markdown-content h5, .markdown-content h6 {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .bot-message h1, .markdown-content h1 { font-size: 1.5rem; margin-top: 1rem; color: #2c5282; }
+    .bot-message h2, .markdown-content h2 { font-size: 1.3rem; margin-top: 0.8rem; color: #4682B4; }
+    .bot-message h3, .markdown-content h3 { font-size: 1.2rem; }
+    .bot-message h4, .markdown-content h4 { font-size: 1.1rem; }
+    .bot-message h5, .bot-message h6, .markdown-content h5, .markdown-content h6 { font-size: 1rem; }
+
+    .bot-message ul, .bot-message ol,
+    .markdown-content ul, .markdown-content ol {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .bot-message ul, .markdown-content ul { list-style-type: disc; }
+    .bot-message ol, .markdown-content ol { list-style-type: decimal; }
+
+    .bot-message li, .markdown-content li {
+      margin-bottom: 0.25rem;
+    }
+
+    .bot-message code, .markdown-content code {
+      font-family: monospace;
+      background-color: #f0f0f0;
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+
+    .bot-message pre, .markdown-content pre {
+      background-color: #f5f5f5;
+      padding: 0.5rem;
+      border-radius: 5px;
+      overflow-x: auto;
+      margin: 0.5rem 0;
+    }
+
+    .bot-message pre code, .markdown-content pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+
+    .bot-message table, .markdown-content table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+
+    .bot-message th, .bot-message td,
+    .markdown-content th, .markdown-content td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+    }
+
+    .bot-message th, .markdown-content th {
+      background-color: #f5f5f5;
+      font-weight: 600;
+    }
+
+    .bot-message blockquote, .markdown-content blockquote {
+      border-left: 3px solid #4682B4;
+      padding-left: 0.75rem;
+      margin-left: 0;
+      margin-right: 0;
+      color: #666;
+    }
+    
+    /* Stili specifici per l'analisi dell'umore */
+    .markdown-content {
+      line-height: 1.6;
+    }
+    
+    .markdown-content p {
+      margin-bottom: 0.75rem;
+    }
+    
+    .markdown-content strong {
+      font-weight: 600;
+      color: #2c5282;
+    }
+
+    .message-time {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      opacity: 0.7;
+    }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem 1rem;
+      background-color: white;
+      border-radius: 1.5rem;
+      border-bottom-left-radius: 0.25rem;
+      width: max-content;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      margin: 0 2px;
+      background-color: #4682B4;
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: typing 1.5s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-5px);
+      }
+    }
+    
+    /* Scrollbar personalizzata */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #4682B4;
+      border-radius: 10px;
+      opacity: 0.7;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2c5282;
+    }
+    
+    /* Floating btn per la chat */
+    .chat-float-btn {
+      position: absolute;
+      bottom: -20px;
+      right: 20px;
+      background: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+    
+    .chat-float-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+    
+    /* Animazione di apparizione per le sezioni */
+    .fade-in-section {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    
+    .fade-in-section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mood selector */
+    .mood-selector {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      background-color: #f5f7fa;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .mood-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0.5rem;
+      border-radius: 8px;
+    }
+
+    .mood-option:hover {
+      background-color: rgba(70, 130, 180, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .mood-option.selected {
+      background-color: rgba(70, 130, 180, 0.2);
+      box-shadow: 0 2px 8px rgba(70, 130, 180, 0.2);
+    }
+
+    .mood-emoji {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    .mood-option:hover .mood-emoji {
+      transform: scale(1.2);
+    }
+
+    .mood-option.selected .mood-emoji {
+      transform: scale(1.2);
+    }
+
+    .mood-label {
+      font-size: 0.7rem;
+      color: #4a5568;
+    }
+    
+    /* Animazione per attirare l'attenzione sul selettore di umore */
+    @keyframes pulse-attention {
+      0% { box-shadow: 0 0 0 0 rgba(70, 130, 180, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(70, 130, 180, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(70, 130, 180, 0); }
+    }
+    
+    .pulse-attention {
+      animation: pulse-attention 1s ease-in-out 2;
+    }
+    
+    /* Badge per umore selezionato */
+    .mood-indicator {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      font-size: 0.7rem;
+      background-color: #4682B4;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(5px);
+      transition: all 0.3s ease;
+    }
+    
+    .mood-indicator.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom checkbox styles */
+    .custom-checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .custom-checkbox input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkmark {
+      position: relative;
+      height: 20px;
+      width: 20px;
+      background-color: #f1f1f1;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .custom-checkbox:hover .checkmark {
+      background-color: #e2e8f0;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+      background-color: #4682B4;
+      border-color: #4682B4;
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    .custom-checkbox .checkmark:after {
+      left: 6px;
+      top: 2px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* Select dropdown styles */
+    .el-conversation-select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      background-color: white;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #4a5568;
+      transition: all 0.3s ease;
+    }
+
+    .el-conversation-select:focus {
+      border-color: #4682B4;
+      box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.15);
+      outline: none;
+    }
+
+    /* Source selector container */
+    .source-selector {
+      background-color: #f8fafc;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .source-selector:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .source-selector-title {
+      font-weight: 600;
+      color: #4682B4;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .source-selector-title i {
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header parallax con effetto onda -->
+  <header class="parallax-header mb-12">
+    <div class="parallax-header-content h-full flex items-center justify-center">
+      <div class="text-center px-4 pb-12 md:pb-4"> <!-- Aggiunto padding-bottom per dispositivi mobili -->
+        <div class="pulse-animation inline-block bg-white p-4 rounded-full shadow-lg mb-4">
+          <svg class="w-20 h-20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="50" fill="white"/>
+            <path d="M30 70C30 57.85 39.85 48 52 48H70V70H30Z" fill="#4682B4"/>
+            <path d="M52 30H30V48H52C55.3137 48 58 45.3137 58 42V36C58 32.6863 55.3137 30 52 30Z" fill="#4682B4"/>
+          </svg>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">Psicologo Virtuale</h1>
+        <!-- Aggiunta del pulsante logout -->
+      <div class="absolute top-4 right-4">
+        <button id="btnLogout" class="bg-white text-blue-600 hover:text-blue-800 font-medium py-2 px-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300 flex items-center">
+          <i class="fas fa-sign-out-alt mr-2"></i>
+          Logout
+        </button>
+      </div>
+    </div>
+    <div class="header-wave">
+      <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+      </svg>
+    </div>
+  </header>
+  
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Sezione Q&A -->
+    <section id="qa-section" class="card-3d mb-12 fade-in-section" data-aos="fade-up" data-aos-duration="1000">
+      <div class="card-header">
+        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+          <i class="fas fa-comments therapy-text-blue mr-3"></i>
+          Sessione Terapeutica
+          <span class="badge-therapy ml-3">
+            <i class="fas fa-brain"></i> Supporto Psicologico
+          </span>
+        </h2>
+      </div>
+      <div class="p-6 relative">
+        <!-- Mood Selector -->
+        <div id="mood-selector" class="mood-selector mb-4">
+          <div class="mood-indicator" id="mood-indicator">Umore selezionato</div>
+          <div class="mood-option" data-mood="great">
+            <div class="mood-emoji">😁</div>
+            <div class="mood-label">Ottimo</div>
+          </div>
+          <div class="mood-option" data-mood="good">
+            <div class="mood-emoji">🙂</div>
+            <div class="mood-label">Bene</div>
+          </div>
+          <div class="mood-option" data-mood="neutral">
+            <div class="mood-emoji">😐</div>
+            <div class="mood-label">Neutrale</div>
+          </div>
+          <div class="mood-option" data-mood="bad">
+            <div class="mood-emoji">🙁</div>
+            <div class="mood-label">Non bene</div>
+          </div>
+          <div class="mood-option" data-mood="terrible">
+            <div class="mood-emoji">😢</div>
+            <div class="mood-label">Male</div>
+          </div>
+          <div class="absolute top-0 left-0 w-full text-center p-1 text-xs text-gray-500">
+            Come ti senti oggi?
+          </div>
+        </div>
+      
+        <!-- Chat Container -->
+        <div id="chat-container" class="chat-container mb-6"></div>
+        
+        <!-- Form per inviare messaggi -->
+        <form id="qa-form" class="flex items-center">
+          <input 
+            type="text" 
+            class="w-full input-therapy mr-3" 
+            id="userInput" 
+            placeholder="Condividi i tuoi pensieri o come ti senti oggi...">
+          <button 
+            type="submit" 
+            class="btn-therapy font-medium py-3 px-6 rounded-full flex-shrink-0 flex items-center">
+            <i class="fas fa-paper-plane mr-2"></i>
+            Invia
+          </button>
+        </form>
+        
+        <!-- Pulsante per resettare la conversazione -->
+        <div class="flex justify-end mt-4">
+          <button 
+            id="btnResetChat" 
+            class="text-gray-600 hover:text-blue-600 font-medium py-2 px-4 rounded-lg text-sm flex items-center hover:bg-gray-100 transition-all duration-300">
+            <i class="fas fa-sync-alt mr-2"></i>
+            Nuova sessione
+          </button>
+        </div>
+        
+        <!-- Floating button per la chat -->
+        <div class="chat-float-btn">
+          <i class="fas fa-chevron-down therapy-text-blue"></i>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Sezione Agent Conversazionale ElevenLabs -->
+    <section id="elevenlabs-section" class="card-3d mb-12 fade-in-section" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+      <div class="card-header flex justify-between items-center">
+        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+          <i class="fas fa-headphones therapy-text-blue mr-3"></i>
+          Assistenza Vocale
+        </h2>
+        <span class="badge-therapy">
+          <i class="fas fa-microphone"></i> Interazione Vocale
+        </span>
+      </div>
+      <div class="p-0 bg-gray-50 relative">
+        <!-- Wrapper per centrare il widget sotto il titolo -->
+        <div class="flex justify-center py-8">
+          <div class="widget-container" id="widget-container">
+            <!-- Widget ElevenLabs: sostituisci agent-id se necessario -->
+            <elevenlabs-convai agent-id="j8WuMd6P0Gc5aji3qRJK"></elevenlabs-convai>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Sezione Riepilogo e Risorse -->
+    <section id="summary-section" class="mb-12 fade-in-section" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Colonna Riepilogo Sessione -->
+        <div class="card-3d">
+          <div class="card-header">
+            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-clipboard-list therapy-text-blue mr-3"></i>
+              Riepilogo Sessione
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="bg-gray-50 p-5 rounded-xl mb-4 border border-gray-100">
+              <p class="text-gray-700 mb-3">Recupera il riepilogo completo della tua sessione terapeutica.</p>
+              <button 
+                id="btnRetrieve" 
+                class="btn-therapy font-medium py-2 px-5 rounded-lg flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Visualizza riepilogo
+              </button>
+            </div>
+            <div id="transcript-display" class="bg-white border border-gray-100 rounded-xl p-4 h-64 overflow-y-auto shadow-sm"></div>
+          </div>
+        </div>
+          
+        <!-- Colonna Risorse Consigliate -->
+        <div class="card-3d">
+          <div class="card-header">
+            <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-book therapy-text-blue mr-3"></i>
+              Risorse Consigliate
+            </h3>
+          </div>
+          <div class="p-6">
+            <div class="bg-gray-50 p-5 rounded-xl mb-4 border border-gray-100">
+              <p class="text-gray-700 mb-3">Ottieni risorse personalizzate in base alla tua conversazione.</p>
+              <button 
+                id="btnGetResources" 
+                class="btn-therapy font-medium py-2 px-5 rounded-lg flex items-center">
+                <i class="fas fa-lightbulb mr-2"></i>
+                Consiglia risorse
+              </button>
+            </div>
+            <div id="resources-display" class="bg-white border border-gray-100 rounded-xl p-4 h-64 overflow-y-auto shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Analisi dell'Umore -->
+    <section id="mood-analysis-section" class="card-3d mb-12 fade-in-section" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="500">
+      <div class="card-header">
+        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+          <i class="fas fa-chart-line therapy-text-blue mr-3"></i>
+          Analisi dell'Umore
+          <span class="badge-therapy ml-3">
+            <i class="fas fa-chart-bar"></i> Monitoraggio
+          </span>
+        </h3>
+      </div>
+      <div class="p-6">
+        <!-- Selettore di Fonti per Analisi -->
+        <div class="source-selector mb-4">
+          <div class="source-selector-title">
+            <i class="fas fa-filter"></i> Seleziona Fonti da Analizzare
+          </div>
+          <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="custom-checkbox">
+                <input type="checkbox" id="analyze-chatbot" checked>
+                <span class="checkmark"></span>
+                Conversazione Testuale
+              </label>
+              
+              <label class="custom-checkbox">
+                <input type="checkbox" id="analyze-elevenlabs">
+                <span class="checkmark"></span>
+                Conversazione Vocale (ElevenLabs)
+              </label>
+            </div>
+            
+            <div id="elevenlabs-selector" class="hidden">
+              <label for="elevenlabs-conversation" class="block text-sm font-medium text-gray-700 mb-1">
+                Seleziona conversazione ElevenLabs:
+              </label>
+              <select id="elevenlabs-conversation" class="el-conversation-select">
+                <option value="">Caricamento conversazioni...</option>
+              </select>
+              <button 
+                id="btnRefreshElevenLabs" 
+                class="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                <i class="fas fa-sync-alt mr-1"></i> Aggiorna lista
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 p-5 rounded-xl mb-4 border border-gray-100">
+          <p class="text-gray-700 mb-3">Traccia l'andamento del tuo umore per comprendere meglio i tuoi pattern emotivi.</p>
+          <button 
+            id="btnAnalyzeMood" 
+            class="btn-therapy font-medium py-2 px-5 rounded-lg flex items-center">
+            <i class="fas fa-search mr-2"></i>
+            Analizza andamento
+          </button>
+        </div>
+        <div id="mood-analysis-display" class="bg-white border border-gray-100 rounded-xl p-4 min-h-48 overflow-y-auto shadow-sm"></div>
+      </div>
+    </section>
+    
+    <!-- Analisi Patologie -->
+    <section id="pathology-analysis-section" class="card-3d mb-12 fade-in-section" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="600">
+      <div class="card-header">
+        <h3 class="text-xl font-semibold text-gray-800 flex items-center">
+          <i class="fas fa-stethoscope therapy-text-blue mr-3"></i>
+          Analisi Clinica
+          <span class="badge-therapy ml-3">
+            <i class="fas fa-clipboard-check"></i> Versione Demo
+          </span>
+        </h3>
+      </div>
+      <div class="p-6">
+        <!-- Selettore di Fonti per Analisi delle Patologie - Riutilizziamo lo stesso stile -->
+        <div class="source-selector mb-4">
+          <div class="source-selector-title">
+            <i class="fas fa-filter"></i> Seleziona Fonti per Analisi Clinica
+          </div>
+          <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="custom-checkbox">
+                <input type="checkbox" id="pathology-analyze-chatbot" checked>
+                <span class="checkmark"></span>
+                Conversazione Testuale
+              </label>
+              
+              <label class="custom-checkbox">
+                <input type="checkbox" id="pathology-analyze-elevenlabs">
+                <span class="checkmark"></span>
+                Conversazione Vocale (ElevenLabs)
+              </label>
+            </div>
+            
+            <div id="pathology-elevenlabs-selector" class="hidden">
+              <label for="pathology-elevenlabs-conversation" class="block text-sm font-medium text-gray-700 mb-1">
+                Seleziona conversazione ElevenLabs:
+              </label>
+              <select id="pathology-elevenlabs-conversation" class="el-conversation-select">
+                <option value="">Seleziona una conversazione...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 p-5 rounded-xl mb-4 border border-gray-100">
+          <p class="text-gray-700 mb-3">Analizza la conversazione per identificare possibili indicazioni cliniche utilizzando il manuale di psicologia.</p>
+          <button 
+            id="btnAnalyzePathology" 
+            class="btn-therapy font-medium py-2 px-5 rounded-lg flex items-center">
+            <i class="fas fa-microscope mr-2"></i>
+            Analizza indicazioni cliniche
+          </button>
+        </div>
+        
+        <!-- Area di visualizzazione dei risultati dell'analisi -->
+        <div id="pathology-analysis-display" class="min-h-48 overflow-hidden">
+          <!-- Contenuto iniziale vuoto -->
+          <div class="flex flex-col items-center justify-center text-gray-500 p-8">
+            <svg class="w-16 h-16 mb-4 opacity-25" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p class="text-center">Premi il pulsante "Analizza indicazioni cliniche" per avviare l'analisi.</p>
+            <p class="text-center text-sm mt-2">L'analisi utilizzerà il manuale di psicologia clinica per identificare possibili indicazioni.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Info Cards -->
+    <section class="mb-12 fade-in-section" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="600">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card-3d p-6 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-user-shield text-2xl therapy-text-blue"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Spazio Sicuro</h3>
+          <p class="text-gray-600">Un ambiente riservato e confidenziale per esplorare i tuoi pensieri ed emozioni.</p>
+        </div>
+        
+        <div class="card-3d p-6 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-brain text-2xl therapy-text-blue"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Supporto Continuo</h3>
+          <p class="text-gray-600">Assistenza psicologica disponibile 24/7 per accompagnarti nei momenti di bisogno.</p>
+        </div>
+        
+        <div class="card-3d p-6 text-center">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-heartbeat text-2xl therapy-text-blue"></i>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">Benessere Emotivo</h3>
+          <p class="text-gray-600">Tecniche e suggerimenti basati sulla psicologia per migliorare il tuo equilibrio emotivo.</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="text-center text-gray-600 py-8 mb-6">
+      <div class="flex items-center justify-center mb-4">
+        <svg class="w-8 h-8 mr-3" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="50" fill="#4682B4"/>
+          <path d="M30 70C30 57.85 39.85 48 52 48H70V70H30Z" fill="white"/>
+          <path d="M52 30H30V48H52C55.3137 48 58 45.3137 58 42V36C58 32.6863 55.3137 30 52 30Z" fill="white"/>
+        </svg>
+        <span class="text-lg font-medium">Psicologo Virtuale</span>
+      </div>
+      <p class="mb-4">© 2025 Psicologo Virtuale - Tutti i diritti riservati</p>
+      <div class="flex justify-center space-x-4">
+        <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors duration-300">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors duration-300">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors duration-300">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="#" class="text-gray-500 hover:text-blue-600 transition-colors duration-300">
+          <i class="fab fa-youtube"></i>
+        </a>
+      </div>
+    </footer>
+  </div>
+  
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- AOS Animation Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  
+  <!-- Script per gestire le animazioni -->
+  <script>
+    // Inizializza AOS
+    document.addEventListener('DOMContentLoaded', function() {
+      AOS.init({
+        once: true,
+        offset: 50
+      });
+      
+      // Animazione per le sezioni
+      const fadeElems = document.querySelectorAll('.fade-in-section');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          }
+        });
+      });
+      
+      fadeElems.forEach(elem => {
+        observer.observe(elem);
+      });
+      
+      // Gestione scroll della chat
+      const scrollToBottomBtn = document.querySelector('.chat-float-btn');
+      const chatContainer = document.getElementById('chat-container');
+      
+      if (scrollToBottomBtn && chatContainer) {
+        scrollToBottomBtn.addEventListener('click', function() {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        });
+        
+        chatContainer.addEventListener('scroll', function() {
+          if (chatContainer.scrollHeight - chatContainer.scrollTop === chatContainer.clientHeight) {
+            scrollToBottomBtn.style.opacity = '0';
+          } else {
+            scrollToBottomBtn.style.opacity = '1';
+          }
+        });
+      }
+
+      // Gestione selettore umore
+      const moodOptions = document.querySelectorAll('.mood-option');
+      let currentMood = null;
+
+      moodOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          // Rimuovi la selezione precedente
+          moodOptions.forEach(opt => opt.classList.remove('selected'));
+          // Aggiungi la selezione corrente
+          this.classList.add('selected');
+          // Salva l'umore selezionato
+          currentMood = this.getAttribute('data-mood');
+        });
+      });
+    });
+  </script>
+  
+  <!-- Fallback for early DOM content to ensure visibility -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add a simple text content to show the page is loading
+      const mainContainer = document.querySelector('.max-w-6xl');
+      if (mainContainer && mainContainer.innerHTML.trim() === '') {
+        mainContainer.innerHTML = '<div class="text-center p-8"><h2>Caricamento dello psicologo virtuale in corso...</h2></div>';
+      }
+    });
+  </script>
+  
+  <!-- Script del widget ElevenLabs - Load this after page content is visible -->
+  <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+  
+  <!-- Script per gestire le chiamate al backend -->
+  <script>
+    // Variabili globali
+    let sessionId = null;
+    let chatContainer = null;
+    let currentMood = null;
+    let elevenlabsConversations = [];
+    
+    // Inizializza la chat
+    function initChat() {
+      // Assicurati che chatContainer sia definito
+      chatContainer = document.getElementById('chat-container');
+      if (!chatContainer) {
+        console.error("Elemento chat-container non trovato");
+        return;
+      }
+      
+      // Genera un nuovo ID di sessione
+      sessionId = 'session-' + Math.random().toString(36).substring(2, 15);
+      
+      // Pulisci la chat
+      chatContainer.innerHTML = '';
+      
+      // Resetta il selettore di umore
+      document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
+      document.getElementById('mood-indicator').classList.remove('visible');
+      
+      // Evidenzia il selettore di umore con un'animazione leggera
+      const moodSelector = document.getElementById('mood-selector');
+      if (moodSelector) {
+        moodSelector.classList.add('pulse-attention');
+        setTimeout(() => {
+          moodSelector.classList.remove('pulse-attention');
+        }, 2000);
+      }
+      
+      // Aggiungi un messaggio di benvenuto
+      addBotMessage('Benvenuto! Sono il tuo psicologo virtuale. Come ti senti oggi? <strong>Seleziona il tuo umore attuale</strong> sopra la chat per aiutarmi a comprendere meglio il tuo stato d\'animo e personalizzare la nostra sessione.');
+    }
+    
+    // Funzione per aggiungere un messaggio dell'utente
+    function addUserMessage(text) {
+      // Verifica che chatContainer esista
+      if (!chatContainer) {
+        console.error("chatContainer non definito in addUserMessage");
+        return;
+      }
+      
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message user-message';
+      messageDiv.innerHTML = `
+        ${text}
+        <div class="message-time text-right">${time}</div>
+      `;
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Funzione per aggiungere un messaggio del bot con supporto Markdown
+    function addBotMessage(text, sources = []) {
+      // Verifica che chatContainer esista
+      if (!chatContainer) {
+        console.error("chatContainer non definito in addBotMessage");
+        return;
+      }
+      
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      // Formatta le fonti se presenti
+      let sourcesHTML = '';
+      if (sources && sources.length > 0) {
+        sourcesHTML = '<div class="mt-2 text-xs text-gray-600"><hr class="my-1"><strong>Fonti:</strong><ul class="list-disc ml-4">';
+        for (const source of sources) {
+          sourcesHTML += `<li>${source.file_name || 'Documento sconosciuto'}</li>`;
+        }
+        sourcesHTML += '</ul></div>';
+      }
+      
+      // Converte il testo da Markdown a HTML usando marked.js
+      const parsedMarkdown = marked.parse(text);
+      
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message bot-message';
+      messageDiv.innerHTML = `
+        <div class="markdown-content">${parsedMarkdown}</div>
+        ${sourcesHTML}
+        <div class="message-time">${time}</div>
+      `;
+      
+      // Rimuovi l'indicatore di digitazione prima di aggiungere il messaggio
+      const typingIndicator = document.querySelector('.typing-indicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+      
+      chatContainer.appendChild(messageDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Funzione per mostrare l'indicatore di digitazione
+    function showTypingIndicator() {
+      // Verifica che chatContainer esista
+      if (!chatContainer) {
+        console.error("chatContainer non definito in showTypingIndicator");
+        return;
+      }
+      
+      const indicatorDiv = document.createElement('div');
+      indicatorDiv.className = 'typing-indicator';
+      indicatorDiv.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      `;
+      chatContainer.appendChild(indicatorDiv);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    
+    // Funzione per inviare una domanda al backend
+    async function sendQuestion(question) {
+      try {
+        // Verifica che ci sia una sessione
+        if (!sessionId) {
+          console.error("sessionId non definito in sendQuestion");
+          return;
+        }
+        
+        // Mostra l'indicatore di digitazione
+        showTypingIndicator();
+
+        // Ottieni l'umore attuale dal selettore
+        const selectedMood = document.querySelector('.mood-option.selected');
+        const mood = selectedMood ? selectedMood.getAttribute('data-mood') : null;
+        
+        // Se è la prima interazione e non è stato selezionato un umore, mostra un suggerimento
+        if (!mood && !document.querySelector('.chat-message.bot-message:not(:first-child)')) {
+          const moodSelector = document.getElementById('mood-selector');
+          if (moodSelector) {
+            moodSelector.classList.add('pulse-attention');
+            setTimeout(() => {
+              moodSelector.classList.remove('pulse-attention');
+            }, 2000);
+          }
+        }
+        
+        // Chiamata API al backend
+        const response = await fetch('/therapy-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            query: question,
+            session_id: sessionId,
+            mood: mood
+          })
+        });
+        
+        const data = await response.json();
+        
+        // Aggiungi la risposta al container della chat
+        if (data && data.answer) {
+          addBotMessage(data.answer, data.sources || []);
+        } else if (data && data.error) {
+          addBotMessage('Mi dispiace, si è verificato un errore: ' + data.error);
+        } else {
+          addBotMessage('Mi dispiace, si è verificato un errore durante l\'elaborazione della tua richiesta.');
+        }
+      } catch (error) {
+        console.error('Errore nella chiamata API:', error);
+        
+        // Rimuovi l'indicatore di digitazione
+        const typingIndicator = document.querySelector('.typing-indicator');
+        if (typingIndicator) {
+          typingIndicator.remove();
+        }
+        
+        addBotMessage('Mi dispiace, si è verificato un errore di comunicazione con il server.');
+      }
+    }
+    
+    // Funzione per caricare le conversazioni ElevenLabs
+    async function loadElevenLabsConversations() {
+      try {
+        const select = document.getElementById('elevenlabs-conversation');
+        if (!select) {
+          console.error("Elemento elevenlabs-conversation non trovato");
+          return;
+        }
+        
+        select.innerHTML = '<option value="">Caricamento conversazioni...</option>';
+        
+        const response = await fetch('/api/elevenlabs/conversations');
+        const data = await response.json();
+        
+        if (data && data.conversations && data.conversations.length > 0) {
+          elevenlabsConversations = data.conversations;
+          
+          // Popola il select con le conversazioni disponibili
+          select.innerHTML = '<option value="">Seleziona una conversazione...</option>';
+          
+          data.conversations.forEach(conv => {
+            // Formatta la data da timestamp UNIX
+            const date = new Date(conv.start_time_unix_secs * 1000);
+            const formattedDate = date.toLocaleString();
+            
+            const option = document.createElement('option');
+            option.value = conv.conversation_id;
+            option.textContent = `${formattedDate} (${conv.message_count || 0} messaggi)`;
+            select.appendChild(option);
+          });
+        } else {
+          select.innerHTML = '<option value="">Nessuna conversazione disponibile</option>';
+        }
+      } catch (error) {
+        console.error('Errore nel caricamento delle conversazioni ElevenLabs:', error);
+        const select = document.getElementById('elevenlabs-conversation');
+        if (select) {
+          select.innerHTML = '<option value="">Errore nel caricamento</option>';
+        }
+      }
+    }
+    
+    // Assicurati che il DOM sia completamente caricato prima di inizializzare gli event listener
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("DOM caricato, inizializzazione eventi");
+      
+      // Variabile globale per tenere traccia dell'umore
+      let currentMood = null;
+      
+      // Inizializza il selettore di umore
+      const moodOptions = document.querySelectorAll('.mood-option');
+      moodOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          // Rimuovi la selezione precedente
+          moodOptions.forEach(opt => opt.classList.remove('selected'));
+          // Aggiungi la selezione corrente
+          this.classList.add('selected');
+          // Memorizza l'umore selezionato
+          currentMood = this.getAttribute('data-mood');
+          console.log("Umore selezionato:", currentMood);
+          
+          // Mostra l'indicatore di umore selezionato
+          const moodIndicator = document.getElementById('mood-indicator');
+          if (moodIndicator) {
+            moodIndicator.textContent = "Umore: " + this.querySelector('.mood-label').textContent;
+            moodIndicator.classList.add('visible');
+          }
+          
+          // Opzionalmente, notifica all'utente che l'umore è stato selezionato
+          const notification = document.createElement('div');
+          notification.className = "fixed top-4 right-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded shadow-md transition-opacity duration-500 ease-in-out opacity-0";
+          notification.innerHTML = `<div class="flex items-center">
+            <div class="py-1"><svg class="w-6 h-6 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg></div>
+            <div>
+              <p class="font-bold">Umore aggiornato</p>
+              <p class="text-sm">Le risposte saranno adattate al tuo umore: ${this.querySelector('.mood-label').textContent}</p>
+            </div>
+          </div>`;
+          document.body.appendChild(notification);
+          
+          // Anima la notifica
+          setTimeout(() => {
+            notification.classList.remove('opacity-0');
+            notification.classList.add('opacity-100');
+          }, 10);
+          
+          // Rimuovi la notifica dopo 3 secondi
+          setTimeout(() => {
+            notification.classList.remove('opacity-100');
+            notification.classList.add('opacity-0');
+            setTimeout(() => {
+              notification.remove();
+            }, 500);
+          }, 3000);
+        });
+      });
+      
+      // Gestione checkboxes per l'analisi delle fonti
+      const checkboxChatbot = document.getElementById('analyze-chatbot');
+      const checkboxElevenLabs = document.getElementById('analyze-elevenlabs');
+      const elevenLabsSelector = document.getElementById('elevenlabs-selector');
+      
+      if (checkboxElevenLabs && elevenLabsSelector) {
+        checkboxElevenLabs.addEventListener('change', function() {
+          if (this.checked) {
+            elevenLabsSelector.classList.remove('hidden');
+            // Carica le conversazioni ElevenLabs quando la checkbox viene attivata
+            loadElevenLabsConversations();
+          } else {
+            elevenLabsSelector.classList.add('hidden');
+          }
+        });
+      }
+      
+      // Pulsante per aggiornare la lista delle conversazioni ElevenLabs
+      const btnRefreshElevenLabs = document.getElementById('btnRefreshElevenLabs');
+      if (btnRefreshElevenLabs) {
+        btnRefreshElevenLabs.addEventListener('click', function() {
+          loadElevenLabsConversations();
+        });
+      }
+      
+      // Riferimento al form Q&A
+      const qaForm = document.getElementById('qa-form');
+      if (qaForm) {
+        qaForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const userInput = document.getElementById('userInput').value.trim();
+          if (!userInput) return;
+          
+          // Aggiungi il messaggio dell'utente alla chat
+          addUserMessage(userInput);
+          
+          // Invia la domanda al backend
+          sendQuestion(userInput);
+          
+          // Pulisci l'input
+          document.getElementById('userInput').value = '';
+        });
+        console.log("Event listener per form Q&A inizializzato");
+      } else {
+        console.error("Elemento qa-form non trovato");
+      }
+    
+      // Gestione del pulsante per resettare la conversazione
+      const btnResetChat = document.getElementById('btnResetChat');
+      if (btnResetChat) {
+        btnResetChat.addEventListener('click', function() {
+          if (!sessionId) {
+            console.error("sessionId non definito per reset");
+            // Inizializza una nuova sessione se non esiste
+            initChat();
+            return;
+          }
+          
+          // Chiama l'API per resettare la conversazione sul server
+          fetch('/reset-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              session_id: sessionId
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              // Reinizializza la chat
+              initChat();
+              
+              // Resetta il selettore di umore
+              document.querySelectorAll('.mood-option').forEach(opt => opt.classList.remove('selected'));
+            } else {
+              console.error('Errore nel reset della sessione:', data.message);
+              alert('Si è verificato un errore nel reset della sessione.');
+            }
+          })
+          .catch(error => {
+            console.error('Errore nella chiamata API:', error);
+            alert('Si è verificato un errore di comunicazione con il server.');
+          });
+        });
+        console.log("Event listener per pulsante reset inizializzato");
+      } else {
+        console.error("Elemento btnResetChat non trovato");
+      }
+    
+      // Recupera il riepilogo della sessione
+      const btnRetrieve = document.getElementById('btnRetrieve');
+      if (btnRetrieve) {
+        btnRetrieve.addEventListener('click', function() {
+          const transcriptDiv = document.getElementById('transcript-display');
+          if (!transcriptDiv) {
+            console.error("Elemento transcript-display non trovato");
+            return;
+          }
+          
+          if (!sessionId) {
+            transcriptDiv.innerHTML = '<div class="p-4 text-center text-gray-500">Inizia una conversazione per generare un riepilogo</div>';
+            return;
+          }
+          
+          transcriptDiv.innerHTML = 
+            '<div class="flex items-center justify-center h-full">' +
+            '<svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">' +
+            '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+            '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>' +
+            '</svg>' +
+            '</div>';
+          
+          fetch(`/api/session-summary/${sessionId}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.summary_html && data.summary_html.trim()) {
+              transcriptDiv.innerHTML = 
+                '<div class="px-2">' + 
+                data.summary_html + 
+                '</div>';
+            } else {
+              transcriptDiv.innerHTML = 
+                '<div class="flex items-center justify-center h-full text-gray-500">' +
+                '<p>Nessuna conversazione disponibile</p>' +
+                '</div>';
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            transcriptDiv.innerHTML = 
+              '<div class="bg-red-50 p-4 rounded-lg border border-red-100 flex items-center">' +
+              '<svg class="w-6 h-6 text-red-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' +
+              '</svg>' +
+              '<div>Errore nel recupero del riepilogo della sessione.</div>' +
+              '</div>';
+          });
+        });
+        console.log("Event listener per pulsante riepilogo inizializzato");
+      } else {
+        console.error("Elemento btnRetrieve non trovato");
+      }
+    
+      // Ottieni risorse consigliate
+      const btnGetResources = document.getElementById('btnGetResources');
+      if (btnGetResources) {
+        btnGetResources.addEventListener('click', function() {
+          const resourcesDiv = document.getElementById('resources-display');
+          if (!resourcesDiv) {
+            console.error("Elemento resources-display non trovato");
+            return;
+          }
+          
+          if (!sessionId) {
+            resourcesDiv.innerHTML = '<div class="p-4 text-center text-gray-500">Inizia una conversazione per ricevere risorse consigliate</div>';
+            return;
+          }
+          
+          resourcesDiv.innerHTML = 
+            '<div class="flex items-center justify-center h-full">' +
+            '<svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">' +
+            '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+            '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>' +
+            '</svg>' +
+            '</div>';
+          
+          fetch('/api/recommend-resources', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              query: "Consiglia risorse",
+              session_id: sessionId
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.resources && data.resources.length > 0) {
+              let resourcesHTML = '<div class="space-y-4">';
+              data.resources.forEach(resource => {
+                resourcesHTML += `
+                  <div class="p-3 border border-blue-100 rounded-lg bg-blue-50">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-medium text-blue-700">${resource.title}</h4>
+                      <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${resource.type}</span>
+                    </div>
+                    <p class="text-sm mt-1 text-gray-600">${resource.description}</p>
+                  </div>
+                `;
+              });
+              resourcesHTML += '</div>';
+              resourcesDiv.innerHTML = resourcesHTML;
+            } else {
+              resourcesDiv.innerHTML = 
+                '<div class="flex items-center justify-center h-full text-gray-500">' +
+                '<p>Nessuna risorsa disponibile. Prova a conversare di più per ricevere consigli personalizzati.</p>' +
+                '</div>';
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            resourcesDiv.innerHTML = 
+              '<div class="bg-red-50 p-4 rounded-lg border border-red-100 flex items-center">' +
+              '<svg class="w-6 h-6 text-red-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' +
+              '</svg>' +
+              '<div>Errore nel recupero delle risorse consigliate.</div>' +
+              '</div>';
+          });
+        });
+        console.log("Event listener per pulsante risorse inizializzato");
+      } else {
+        console.error("Elemento btnGetResources non trovato");
+      }
+
+      // Analisi dell'umore con fonti multiple
+      const btnAnalyzeMood = document.getElementById('btnAnalyzeMood');
+      if (btnAnalyzeMood) {
+        btnAnalyzeMood.addEventListener('click', function() {
+          const moodAnalysisDiv = document.getElementById('mood-analysis-display');
+          if (!moodAnalysisDiv) {
+            console.error("Elemento mood-analysis-display non trovato");
+            return;
+          }
+          
+          if (!sessionId) {
+            moodAnalysisDiv.innerHTML = '<div class="p-4 text-center text-gray-500">Inizia una conversazione per analizzare l\'umore</div>';
+            return;
+          }
+          
+          // Ottieni le fonti selezionate per l'analisi
+          const analyzeChatbot = document.getElementById('analyze-chatbot').checked;
+          const analyzeElevenlabs = document.getElementById('analyze-elevenlabs').checked;
+          const elevenlabsConversationId = analyzeElevenlabs ? 
+            document.getElementById('elevenlabs-conversation').value : null;
+          
+          if (!analyzeChatbot && (!analyzeElevenlabs || !elevenlabsConversationId)) {
+            moodAnalysisDiv.innerHTML = '<div class="p-4 text-center text-orange-500">Seleziona almeno una fonte da analizzare</div>';
+            return;
+          }
+          
+          moodAnalysisDiv.innerHTML = 
+            '<div class="flex items-center justify-center h-full">' +
+            '<svg class="animate-spin h-8 w-8 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">' +
+            '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+            '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>' +
+            '</svg>' +
+            '</div>';
+          
+          fetch('/api/mood-analysis', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              session_id: sessionId,
+              analyze_chatbot: analyzeChatbot,
+              analyze_elevenlabs: analyzeElevenlabs,
+              elevenlabs_conversation_id: elevenlabsConversationId
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.mood_analysis && data.mood_analysis.trim()) {
+              // Converti il Markdown in HTML
+              const parsedMarkdown = marked.parse(data.mood_analysis);
+              moodAnalysisDiv.innerHTML = 
+                '<div class="px-2 markdown-content">' + 
+                parsedMarkdown + 
+                '</div>';
+            } else {
+              moodAnalysisDiv.innerHTML = 
+                '<div class="flex items-center justify-center h-full text-gray-500">' +
+                '<p>Dati insufficienti per l\'analisi. Continua la conversazione per ottenere un\'analisi dell\'umore.</p>' +
+                '</div>';
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            moodAnalysisDiv.innerHTML = 
+              '<div class="bg-red-50 p-4 rounded-lg border border-red-100 flex items-center">' +
+              '<svg class="w-6 h-6 text-red-500 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' +
+              '</svg>' +
+              '<div>Errore nell\'analisi dell\'umore: ' + err.message + '</div>' +
+              '</div>';
+          });
+        });
+        console.log("Event listener per pulsante analisi umore inizializzato");
+      } else {
+        console.error("Elemento btnAnalyzeMood non trovato");
+      }
+      
+      // Gestione checkboxes per l'analisi delle patologie
+      const checkboxPathologyChatbot = document.getElementById('pathology-analyze-chatbot');
+      const checkboxPathologyElevenLabs = document.getElementById('pathology-analyze-elevenlabs');
+      const pathologyElevenLabsSelector = document.getElementById('pathology-elevenlabs-selector');
+      
+      if (checkboxPathologyElevenLabs && pathologyElevenLabsSelector) {
+        checkboxPathologyElevenLabs.addEventListener('change', function() {
+          if (this.checked) {
+            pathologyElevenLabsSelector.classList.remove('hidden');
+            // Popola il selettore con le conversazioni già caricate (o caricale se necessario)
+            populatePathologyElevenLabsSelect();
+          } else {
+            pathologyElevenLabsSelector.classList.add('hidden');
+          }
+        });
+      }
+      
+      // Funzione per popolare il selettore di conversazioni ElevenLabs per l'analisi patologica
+      function populatePathologyElevenLabsSelect() {
+        const select = document.getElementById('pathology-elevenlabs-conversation');
+        if (!select) return;
+        
+        // Se abbiamo già caricato le conversazioni, usiamo quelle
+        if (elevenlabsConversations && elevenlabsConversations.length > 0) {
+          select.innerHTML = '<option value="">Seleziona una conversazione...</option>';
+          
+          elevenlabsConversations.forEach(conv => {
+            // Formatta la data da timestamp UNIX
+            const date = new Date(conv.start_time_unix_secs * 1000);
+            const formattedDate = date.toLocaleString();
+            
+            const option = document.createElement('option');
+            option.value = conv.conversation_id;
+            option.textContent = `${formattedDate} (${conv.message_count || 0} messaggi)`;
+            select.appendChild(option);
+          });
+        } else {
+          // Altrimenti, carica le conversazioni
+          select.innerHTML = '<option value="">Caricamento conversazioni...</option>';
+          loadElevenLabsConversations().then(() => {
+            populatePathologyElevenLabsSelect();
+          });
+        }
+      }
+      
+      // Analizza le conversazioni per identificare possibili patologie
+      const btnAnalyzePathology = document.getElementById('btnAnalyzePathology');
+      if (btnAnalyzePathology) {
+        btnAnalyzePathology.addEventListener('click', function() {
+          const pathologyAnalysisDiv = document.getElementById('pathology-analysis-display');
+          if (!pathologyAnalysisDiv) {
+            console.error("Elemento pathology-analysis-display non trovato");
+            return;
+          }
+          
+          if (!sessionId) {
+            pathologyAnalysisDiv.innerHTML = `
+              <div class="p-8 text-center">
+                <div class="inline-block p-4 rounded-full bg-yellow-100 mb-4">
+                  <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <p class="text-gray-700 font-medium">Inizia una conversazione per analizzare le indicazioni cliniche</p>
+              </div>`;
+            return;
+          }
+          
+          // Ottieni le fonti selezionate per l'analisi
+          const analyzeChatbot = document.getElementById('pathology-analyze-chatbot').checked;
+          const analyzeElevenlabs = document.getElementById('pathology-analyze-elevenlabs').checked;
+          const elevenlabsConversationId = analyzeElevenlabs ? 
+            document.getElementById('pathology-elevenlabs-conversation').value : null;
+          
+          if (!analyzeChatbot && (!analyzeElevenlabs || !elevenlabsConversationId)) {
+            pathologyAnalysisDiv.innerHTML = `
+              <div class="p-8 text-center">
+                <div class="inline-block p-4 rounded-full bg-yellow-100 mb-4">
+                  <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                  </svg>
+                </div>
+                <p class="text-yellow-600 font-medium">Seleziona almeno una fonte da analizzare</p>
+              </div>`;
+            return;
+          }
+          
+          // Funzione per procedere con l'analisi
+          function proceedWithAnalysis() {
+            // Mostra il loading
+            pathologyAnalysisDiv.innerHTML = `
+              <div class="flex flex-col items-center justify-center py-12">
+                <svg class="animate-spin h-12 w-12 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-gray-600">Analisi in corso...</p>
+                <p class="text-sm text-gray-500 mt-2">Sto esaminando la conversazione con il database di psicologia clinica</p>
+              </div>`;
+            
+            fetch('/api/pathology-analysis', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                session_id: sessionId,
+                analyze_chatbot: analyzeChatbot,
+                analyze_elevenlabs: analyzeElevenlabs,
+                elevenlabs_conversation_id: elevenlabsConversationId
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log("Dati analisi patologie:", data);
+              
+              if (data.possible_pathologies && data.possible_pathologies.length > 0) {
+                // Contenitore per i risultati dell'analisi
+                let resultsHTML = `
+                  <div class="mb-6 bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
+                    <h4 class="text-lg font-medium text-blue-700 mb-3">Riepilogo dell'Analisi</h4>
+                    <p class="text-gray-700">${data.analysis_summary}</p>
+                  </div>
+                  <h4 class="text-lg font-medium text-blue-700 mb-4">Possibili Indicazioni Cliniche</h4>
+                  <div class="space-y-4">`;
+                
+                // Aggiungi ogni patologia trovata
+                data.possible_pathologies.forEach(pathology => {
+                  // Calcola il colore della confidenza in base al valore
+                  let confidenceColor = 'bg-green-100 text-green-800';
+                  if (pathology.confidence < 0.5) {
+                    confidenceColor = 'bg-yellow-100 text-yellow-800';
+                  } else if (pathology.confidence > 0.75) {
+                    confidenceColor = 'bg-blue-100 text-blue-800';
+                  }
+                  
+                  // Formatta i sintomi chiave
+                  let symptomsHTML = '';
+                  if (pathology.key_symptoms && pathology.key_symptoms.length) {
+                    symptomsHTML = '<ul class="list-disc ml-5 mt-2 text-sm text-gray-600">';
+                    pathology.key_symptoms.forEach(symptom => {
+                      symptomsHTML += `<li>${symptom}</li>`;
+                    });
+                    symptomsHTML += '</ul>';
+                  }
+                  
+                  // Aggiunge la card della patologia
+                  resultsHTML += `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                      <div class="flex justify-between items-start mb-2">
+                        <h5 class="font-semibold text-gray-800">${pathology.name}</h5>
+                        <span class="${confidenceColor} text-xs px-2 py-1 rounded-full">${Math.round(pathology.confidence * 100)}% match</span>
+                      </div>
+                      <p class="text-gray-700 mb-2">${pathology.description}</p>
+                      <div class="mb-1 text-sm font-medium text-gray-700">Indicatori rilevati:</div>
+                      ${symptomsHTML}
+                      ${pathology.source ? `<div class="text-xs text-gray-500 mt-2">Fonte: ${pathology.source}</div>` : ''}
+                    </div>`;
+                });
+                
+                resultsHTML += `</div>
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100 text-xs text-gray-600">
+                  <strong class="text-blue-700">Nota:</strong> Questa analisi è solo a scopo dimostrativo e non sostituisce una valutazione professionale. I risultati sono generati automaticamente in base ai pattern rilevati nella conversazione.
+                </div>`;
+                
+                pathologyAnalysisDiv.innerHTML = resultsHTML;
+              } else {
+                // Nessuna patologia trovata o dati insufficienti
+                const insufficientDataMessage = data.analysis_summary || 'Continua la conversazione per ottenere un\'analisi più approfondita.';
+                const isMinimumDataMessage = insufficientDataMessage.includes("Sono necessari almeno");
+                
+                // Personalizza ulteriormente il messaggio in base al motivo dei dati insufficienti
+                pathologyAnalysisDiv.innerHTML = `
+                  <div class="p-8 text-center">
+                    <div class="inline-block p-4 rounded-full ${isMinimumDataMessage ? 'bg-yellow-100' : 'bg-blue-100'} mb-4">
+                      <svg class="w-8 h-8 ${isMinimumDataMessage ? 'text-yellow-600' : 'text-blue-600'}" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    </div>
+                    <p class="${isMinimumDataMessage ? 'text-yellow-700' : 'text-gray-700'} font-medium">
+                      ${isMinimumDataMessage ? 'Conversazione troppo breve per l\'analisi' : 'Dati insufficienti per un\'analisi clinica completa'}
+                    </p>
+                    <p class="text-gray-600 mt-2">${insufficientDataMessage}</p>
+${isMinimumDataMessage ? `
+                    <div class="mt-6 p-4 bg-yellow-50 border border-yellow-100 rounded-lg text-left">
+                      <p class="text-sm text-yellow-800">
+                        <strong>Suggerimento:</strong> Per ottenere un'analisi clinica significativa, è necessario che la conversazione contenga:
+                      </p>
+                      <ul class="list-disc ml-5 mt-2 text-sm text-yellow-700">
+                        <li>Un numero sufficiente di messaggi scambiati</li>
+                        <li>Contenuti significativi sulla condizione emotiva e psicologica</li>
+                        <li>Descrizioni di eventuali sintomi, preoccupazioni o comportamenti rilevanti</li>
+                      </ul>
+                    </div>
+                    ` : ''}
+                  </div>`;
+              }
+            })
+            .catch(err => {
+              console.error("Errore nell'analisi delle patologie:", err);
+              pathologyAnalysisDiv.innerHTML = `
+                <div class="p-8 text-center">
+                  <div class="inline-block p-4 rounded-full bg-red-100 mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <p class="text-red-600 font-medium">Si è verificato un errore durante l'analisi</p>
+                  <p class="text-gray-600 mt-2">Dettagli: ${err.message || 'Errore sconosciuto'}</p>
+                </div>`;
+            });
+          }
+          
+          // Verifica preventiva che ci siano abbastanza messaggi nella conversazione
+          let hasSufficientData = false;
+          let minUserMessages = 3; // Stesso valore usato nel backend
+          
+          if (analyzeChatbot && sessionId) {
+            // Conta i messaggi dell'utente
+            let userMessageCount = 0;
+            const chatContainer = document.getElementById('chat-container');
+            if (chatContainer) {
+              const userMessages = chatContainer.querySelectorAll('.user-message');
+              userMessageCount = userMessages.length;
+              
+              if (userMessageCount >= minUserMessages) {
+                hasSufficientData = true;
+              }
+            }
+            
+            // Se non ci sono abbastanza messaggi, mostra un avviso e chiedi conferma
+            if (!hasSufficientData) {
+              pathologyAnalysisDiv.innerHTML = `
+                <div class="p-8 text-center">
+                  <div class="inline-block p-4 rounded-full bg-yellow-100 mb-4">
+                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                  </div>
+                  <p class="text-yellow-600 font-medium">Conversazione insufficiente per l'analisi</p>
+                  <p class="text-gray-600 mt-2">Sono necessari almeno ${minUserMessages} messaggi dell'utente per un'analisi significativa. Attualmente hai ${userMessageCount} messaggi.</p>
+                  <div class="flex justify-center mt-6 space-x-4">
+                    <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors" id="btnProceedAnyway">
+                      Procedi comunque
+                    </button>
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors" id="btnCancelAnalysis">
+                      Annulla
+                    </button>
+                  </div>
+                </div>`;
+                
+              // Aggiungi i listener ai bottoni
+              setTimeout(() => {
+                const btnProceedAnyway = document.getElementById('btnProceedAnyway');
+                const btnCancelAnalysis = document.getElementById('btnCancelAnalysis');
+                
+                if (btnProceedAnyway) {
+                  btnProceedAnyway.addEventListener('click', () => {
+                    // Continua con l'analisi anche se insufficiente
+                    proceedWithAnalysis();
+                  });
+                }
+                
+                if (btnCancelAnalysis) {
+                  btnCancelAnalysis.addEventListener('click', () => {
+                    // Ripristina la visualizzazione originale
+                    pathologyAnalysisDiv.innerHTML = `
+                      <div class="flex flex-col items-center justify-center text-gray-500 p-8">
+                        <svg class="w-16 h-16 mb-4 opacity-25" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="text-center">Premi il pulsante "Analizza indicazioni cliniche" per avviare l'analisi.</p>
+                        <p class="text-center text-sm mt-2">L'analisi utilizzerà il manuale di psicologia clinica per identificare possibili indicazioni.</p>
+                      </div>
+                    `;
+                  });
+                }
+              }, 0);
+              
+              return;
+            }
+          }
+          
+          // Se arriva qui, ci sono dati sufficienti (o l'utente ha scelto di procedere comunque)
+          proceedWithAnalysis();
+        });
+      } else {
+        console.error("Elemento btnAnalyzePathology non trovato");
+      }
+      
+      // Inizializza la chat dopo aver configurato tutti gli event listener
+      initChat();
+      console.log("Chat inizializzata");
+    });
+    
+    // Al termine del caricamento, forziamo il widget a rimanere nel container
+    window.addEventListener('load', () => {
+      console.log("Window caricata, gestione widget ElevenLabs");
+      
+      const observer = new MutationObserver((mutations, obs) => {
+        const widget = document.querySelector('elevenlabs-convai');
+        const container = document.getElementById('widget-container');
+        if (widget && container && widget.parentNode !== container) {
+          console.log("Sposto il widget ElevenLabs nel container corretto");
+          container.appendChild(widget);
+        }
+      });
+      
+      // Osserva il DOM per catturare quando il widget viene caricato/inserito
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      // Controllo iniziale
+      const widget = document.querySelector('elevenlabs-convai');
+      const container = document.getElementById('widget-container');
+      if (widget && container && widget.parentNode !== container) {
+        console.log("Inizializzazione widget ElevenLabs");
+        container.appendChild(widget);
+      }
+    });
+
+
+    // Gestione del pulsante logout
+const btnLogout = document.getElementById('btnLogout');
+if (btnLogout) {
+  btnLogout.addEventListener('click', function() {
+    // Chiama l'API per il logout
+    fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Reindirizza alla pagina di login
+        window.location.href = '/';
+      } else {
+        console.error('Errore nel logout:', data.message);
+        alert('Si è verificato un errore durante il logout.');
+      }
+    })
+    .catch(error => {
+      console.error('Errore nella chiamata API:', error);
+      alert('Si è verificato un errore di comunicazione con il server.');
+    });
+  });
+}
+  </script>
+</body>
+</html>
