@@ -1,9 +1,3 @@
-"""
-Backend principale per il Psicologo Virtuale.
-Include RAG con Chroma, gestione conversazioni e API per il frontend.
-Integrazione con ElevenLabs per analisi conversazioni vocali.
-"""
-
 import os
 import json
 import requests
@@ -21,9 +15,10 @@ from pathlib import Path
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import Qdrant  # Modificato da Chroma a Qdrant
 from langchain_openai import OpenAIEmbeddings
 from langchain.prompts import PromptTemplate
+from qdrant_client import QdrantClient  # Nuovo import per Qdrant
 
 
 
@@ -43,12 +38,15 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")  # Aggiungi questa variabile a .env
+# Configurazione Qdrant
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+COLLECTION_NAME = os.getenv("QDRANT_COLLECTION", "psico_virtuale")  # Nome della collezione
 
 # Configurazione percorsi
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 DATA_DIR = BASE_DIR / "data"
-VECTOR_STORE_PATH = DATA_DIR / "vector_store"
 
 # Configurazione LLM
 MODEL_NAME = "gpt-4o-mini"
@@ -253,18 +251,35 @@ Risposta:
 """)
 
 def get_vectorstore():
-    """Carica il vector store da disco."""
+    """Carica il vector store da Qdrant."""
     if not OPENAI_API_KEY:
         raise ValueError("OPENAI_API_KEY non trovata. Imposta la variabile d'ambiente.")
     
-    if not VECTOR_STORE_PATH.exists():
-        raise FileNotFoundError(f"Vector store non trovato in {VECTOR_STORE_PATH}. Eseguire prima ingest.py.")
+    if not QDRANT_URL or not QDRANT_API_KEY:
+        raise ValueError("QDRANT_URL o QDRANT_API_KEY non trovati. Imposta le variabili d'ambiente.")
     
+    # Inizializza il client Qdrant
+    client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+    
+    # Verifica che la collezione esista
+    collections = client.get_collections().collections
+    collection_names = [collection.name for collection in collections]
+    
+    if COLLECTION_NAME not in collection_names:
+        raise FileNotFoundError(f"Collezione '{COLLECTION_NAME}' non trovata in Qdrant. Eseguire prima ingest.py.")
+    
+    # Inizializza gli embeddings
     embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
-    vector_store = Chroma(
-        persist_directory=str(VECTOR_STORE_PATH),
-        embedding_function=embeddings
+    
+    # Crea e restituisci il vector store
+    vector_store = Qdrant(
+        client=client,
+        collection_name=COLLECTION_NAME,
+        embeddings=embeddings,
+        content_payload_key="page_content",
+        metadata_payload_key="metadata"
     )
+    
     return vector_store
 
 def get_conversation_chain(session_id: str):
@@ -917,7 +932,7 @@ if __name__ == "__main__":
         get_vectorstore()
         logger.info("Vector store trovato. Avvio del server...")
     except FileNotFoundError:
-        logger.error("Vector store non trovato. Eseguire prima ingest.py per indicizzare i documenti con conoscenze psicologiche.")
+        logger.error("Collezione Qdrant non trovata. Eseguire prima ingest.py per indicizzare i documenti con conoscenze psicologiche.")
         exit(1)
     except Exception as e:
         logger.error(f"Errore durante l'inizializzazione: {str(e)}", exc_info=True)
