@@ -41,7 +41,14 @@ ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")  # Aggiungi questa variabil
 # Configurazione Qdrant
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-COLLECTION_NAME = os.getenv("QDRANT_COLLECTION", "psico_virtuale")  # Nome della collezione
+COLLECTION_NAME = os.getenv("QDRANT_COLLECTION")  # Nome della collezione
+
+
+
+# Aggiungi questo dopo aver caricato le variabili d'ambiente
+print(f"QDRANT_URL = {QDRANT_URL}")
+print(f"QDRANT_API_KEY = {QDRANT_API_KEY}")
+print(f"COLLECTION_NAME = {COLLECTION_NAME}")
 
 # Configurazione percorsi
 BASE_DIR = Path(__file__).resolve().parent
@@ -269,14 +276,14 @@ def get_vectorstore():
         raise FileNotFoundError(f"Collezione '{COLLECTION_NAME}' non trovata in Qdrant. Eseguire prima ingest.py.")
     
     # Inizializza gli embeddings
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     
     # Crea e restituisci il vector store
     vector_store = Qdrant(
         client=client,
         collection_name=COLLECTION_NAME,
         embeddings=embeddings,
-        content_payload_key="page_content",
+        content_payload_key="text",
         metadata_payload_key="metadata"
     )
     

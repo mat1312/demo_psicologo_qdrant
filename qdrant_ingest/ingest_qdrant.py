@@ -1,16 +1,4 @@
-async def delete_collection_if_exists(client):
-    """Elimina la collezione se esiste già."""
-    try:
-        collections = await client.get_collections()
-        collection_names = [collection.name for collection in collections.collections]
-        
-        if COLLECTION_NAME in collection_names:
-            logger.info(f"Eliminazione della collezione esistente '{COLLECTION_NAME}'...")
-            await client.delete_collection(collection_name=COLLECTION_NAME)
-            logger.info(f"Collezione '{COLLECTION_NAME}' eliminata con successo")
-    except Exception as e:
-        logger.error(f"Errore nell'eliminazione della collezione: {e}")
-        raise"""
+"""
 Script per indicizzare i documenti della Croce Rossa Italiana nel vector database Qdrant Cloud.
 Questo script processa tutti i file dalla cartella 'output' e li indicizza nel Qdrant Cloud.
 Versione ottimizzata con operazioni asincrone.
@@ -91,14 +79,14 @@ async def load_file(loader_class, file_path, **kwargs):
 
 
 async def load_documents(input_dir: str) -> List[Document]:
-    """Carica tutti i file .md dalla directory specificata."""
+    """Carica tutti i file .md e .pdf dalla directory specificata."""
     if not os.path.exists(input_dir):
         logger.error(f"La directory {input_dir} non esiste.")
         return []
     
     tasks = []
     
-    # Carica solo file markdown
+    # Carica file markdown
     md_pattern = os.path.join(input_dir, "**/*.md")
     md_files = glob.glob(md_pattern, recursive=True)
     
@@ -106,6 +94,15 @@ async def load_documents(input_dir: str) -> List[Document]:
     for md_path in md_files:
         logger.info(f"Accodamento MD: {md_path}")
         tasks.append(load_file(UnstructuredMarkdownLoader, md_path))
+    
+    # Carica file PDF
+    pdf_pattern = os.path.join(input_dir, "**/*.pdf")
+    pdf_files = glob.glob(pdf_pattern, recursive=True)
+    
+    # Accodamento di tutti i file PDF
+    for pdf_path in pdf_files:
+        logger.info(f"Accodamento PDF: {pdf_path}")
+        tasks.append(load_file(PyPDFLoader, pdf_path))
     
     # Attendi il completamento di tutti i task
     results = await asyncio.gather(*tasks)
@@ -115,7 +112,8 @@ async def load_documents(input_dir: str) -> List[Document]:
     for docs in results:
         documents.extend(docs)
     
-    logger.info(f"Caricati {len(documents)} documenti in totale da {len(md_files)} file MD")
+    total_files = len(md_files) + len(pdf_files)
+    logger.info(f"Caricati {len(documents)} documenti in totale da {len(md_files)} file MD e {len(pdf_files)} file PDF")
     return documents
 
 
@@ -135,6 +133,21 @@ async def split_documents_async(documents: List[Document]) -> List[Document]:
     
     logger.info(f"Documenti suddivisi in {len(chunks)} chunks")
     return chunks
+
+
+async def delete_collection_if_exists(client):
+    """Elimina la collezione se esiste già."""
+    try:
+        collections = await client.get_collections()
+        collection_names = [collection.name for collection in collections.collections]
+        
+        if COLLECTION_NAME in collection_names:
+            logger.info(f"Eliminazione della collezione esistente '{COLLECTION_NAME}'...")
+            await client.delete_collection(collection_name=COLLECTION_NAME)
+            logger.info(f"Collezione '{COLLECTION_NAME}' eliminata con successo")
+    except Exception as e:
+        logger.error(f"Errore nell'eliminazione della collezione: {e}")
+        raise
 
 
 async def create_qdrant_collection(client, embedding_size=1536):
